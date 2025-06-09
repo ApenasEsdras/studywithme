@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:studywithme/styles/colors_app.dart';
+import 'package:studywithme/widgets/custon_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,19 +16,20 @@ class _HomeScreenState extends State<HomeScreen> {
   int remainingSeconds = 1500;
   Timer? timer;
   double progress = 0.0;
-  double selectedMinutes = 25;
+  double selectedDuration = 1500; // segundos
 
+  /// Inicia o timer com o tempo selecionado
   void startPomodoro() {
     timer?.cancel();
 
-    if (selectedMinutes <= 0) {
+    totalSeconds = selectedDuration.toInt();
+    if (totalSeconds < 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Insira um tempo válido em minutos")),
+        const SnackBar(content: Text("Tempo mínimo é 10 segundos.")),
       );
       return;
     }
 
-    totalSeconds = (selectedMinutes * 60).toInt();
     remainingSeconds = totalSeconds;
     progress = 0.0;
 
@@ -38,13 +41,31 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       } else {
         t.cancel();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Pomodoro finalizado!")));
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CustomConfirmationDialog(
+              mensagem: 'Pomodoro finalizado. Deseja reiniciar?',
+              primeiraOpcao: 'Não',
+              iconePrimeiraOpcao: Icons.close,
+              sePrimeiraOpcaoClica: () {
+                Navigator.pop(context);
+                stopPomodoro();
+              },
+              segundaOpcao: 'Sim',
+              iconeSegundaOpcao: Icons.refresh,
+              seSegundaOpcaoClica: () {
+                Navigator.pop(context);
+                startPomodoro();
+              },
+            );
+          },
+        );
       }
     });
   }
 
+  /// Para o timer e reseta valores
   void stopPomodoro() {
     timer?.cancel();
     setState(() {
@@ -53,10 +74,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Formata tempo restante como mm:ss
   String get timeFormatted {
     final minutes = (remainingSeconds ~/ 60).toString().padLeft(2, '0');
     final seconds = (remainingSeconds % 60).toString().padLeft(2, '0');
     return "$minutes:$seconds";
+  }
+
+  /// Formata o tempo selecionado para exibição no slider (ex: 5m 30s)
+  String get selectedDurationFormatted {
+    final minutes = (selectedDuration ~/ 60).toInt();
+    final seconds = (selectedDuration % 60).toInt();
+    return '${minutes}m ${seconds}s';
   }
 
   @override
@@ -120,21 +149,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              "Tempo do Pomodoro: ${selectedMinutes.toInt()} min",
+                              "Tempo do Pomodoro: $selectedDurationFormatted",
                               style: const TextStyle(fontSize: 16),
                               textAlign: TextAlign.center,
                             ),
                             Slider(
-                              min: 1,
-                              max: 60,
-                              divisions: 59,
-                              value: selectedMinutes,
-                              label: "${selectedMinutes.toInt()} min",
+                              min: 10,
+                              max: 3600,
+                              divisions: 60 * 6, // divisões a cada 10s
+                              value: selectedDuration,
+                              label: selectedDurationFormatted,
                               onChanged: (value) {
                                 if (timer?.isActive ?? false) return;
-                                setState(() {
-                                  selectedMinutes = value;
-                                });
+                                setState(() => selectedDuration = value);
                               },
                             ),
                           ],
@@ -169,7 +196,7 @@ class BotaoParar extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: onPressed,
-      color: Colors.grey.shade400,
+      color: ColorsApp.instance.CinzaMedio, // cor cinza
       height: 60,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0)),
@@ -197,7 +224,7 @@ class BotaoIniciar extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: onPressed,
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).primaryColor, // cor primária do tema
       height: 60,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(bottomRight: Radius.circular(10.0)),
