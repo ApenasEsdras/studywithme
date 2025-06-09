@@ -10,11 +10,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int totalSeconds = 1500; // 25 min default
+  int totalSeconds = 1500;
   int remainingSeconds = 1500;
   Timer? timer;
   double progress = 0.0;
-
   double selectedMinutes = 25;
 
   void startPomodoro() {
@@ -75,9 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Container quadrado com borda arredondada
             Container(
-              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey.shade400, width: 1.5),
@@ -91,81 +88,128 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: progress.clamp(0.0, 1.0)),
-                    duration: const Duration(milliseconds: 500),
-                    builder: (context, value, child) {
-                      return CircularPercentIndicator(
-                        radius: 120.0,
-                        lineWidth: 12.0,
-                        percent: value,
-                        center: Text(
-                          timeFormatted,
-                          style: const TextStyle(fontSize: 36),
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(
+                            begin: 0.0,
+                            end: progress.clamp(0.0, 1.0),
+                          ),
+                          duration: const Duration(milliseconds: 500),
+                          builder: (context, value, child) {
+                            return CircularPercentIndicator(
+                              radius: 120.0,
+                              lineWidth: 12.0,
+                              percent: value,
+                              center: Text(
+                                timeFormatted,
+                                style: const TextStyle(fontSize: 36),
+                              ),
+                              progressColor: Colors.deepOrange,
+                              backgroundColor: Colors.grey.shade300,
+                              circularStrokeCap: CircularStrokeCap.round,
+                            );
+                          },
                         ),
-                        progressColor: Colors.deepOrange,
-                        backgroundColor: Colors.grey.shade300,
-                        circularStrokeCap: CircularStrokeCap.round,
-                      );
-                    },
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              "Tempo do Pomodoro: ${selectedMinutes.toInt()} min",
+                              style: const TextStyle(fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
+                            Slider(
+                              min: 1,
+                              max: 60,
+                              divisions: 59,
+                              value: selectedMinutes,
+                              label: "${selectedMinutes.toInt()} min",
+                              onChanged: (value) {
+                                if (timer?.isActive ?? false) return;
+                                setState(() {
+                                  selectedMinutes = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Slider para definir o tempo
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  // Botões colados à base do container
+                  Row(
                     children: [
-                      Text(
-                        "Tempo do Pomodoro: ${selectedMinutes.toInt()} min",
-                        style: const TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                      Slider(
-                        min: 1,
-                        max: 60,
-                        divisions: 59,
-                        value: selectedMinutes,
-                        label: "${selectedMinutes.toInt()} min",
-                        onChanged: (value) {
-                          if (timer?.isActive ?? false) {
-                            return; // bloqueia slider se timer ativo
-                          }
-                          setState(() {
-                            selectedMinutes = value;
-                          });
-                        },
-                      ),
+                      Expanded(child: BotaoParar(onPressed: stopPomodoro)),
+                      Expanded(child: BotaoIniciar(onPressed: startPomodoro)),
                     ],
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 24),
-
-            // Botões em linha: Parar (esquerda) e Iniciar (direita)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: stopPomodoro,
-                    child: const Text("Parar"),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: startPomodoro,
-                    child: const Text("Iniciar"),
-                  ),
-                ),
-              ],
-            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class BotaoParar extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const BotaoParar({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: onPressed,
+      color: Colors.grey.shade400,
+      height: 60,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0)),
+      ),
+      child: const Center(
+        child: Text(
+          'Parar',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BotaoIniciar extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const BotaoIniciar({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: onPressed,
+      color: Theme.of(context).primaryColor,
+      height: 60,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(bottomRight: Radius.circular(10.0)),
+      ),
+      child: const Center(
+        child: Text(
+          'Iniciar',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
         ),
       ),
     );
