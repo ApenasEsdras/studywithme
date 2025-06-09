@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pomodoro App',
       theme: ThemeConfig.tema,
+      debugShowCheckedModeBanner: false,
       home: AuthWrapper(),
     );
   }
