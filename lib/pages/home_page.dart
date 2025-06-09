@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:studywithme/styles/colors_app.dart';
+import 'package:studywithme/styles/theme_config.dart';
 import 'package:studywithme/widgets/custon_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,6 +17,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? timer;
   double progress = 0.0;
   double selectedDuration = 1500; // segundos
+
+  bool isDark = false;
+
+  void toggleTheme() {
+    setState(() {
+      isDark = !isDark;
+      ThemeConfig.temaApp = isDark ? 'dark' : 'light';
+    });
+  }
 
   /// Inicia o timer com o tempo selecionado
   void startPomodoro() {
@@ -96,91 +105,103 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Pomodoro Timer")),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade400, width: 1.5),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TweenAnimationBuilder<double>(
-                          tween: Tween(
-                            begin: 0.0,
-                            end: progress.clamp(0.0, 1.0),
-                          ),
-                          duration: const Duration(milliseconds: 500),
-                          builder: (context, value, child) {
-                            return CircularPercentIndicator(
-                              radius: 120.0,
-                              lineWidth: 12.0,
-                              percent: value,
-                              center: Text(
-                                timeFormatted,
-                                style: const TextStyle(fontSize: 36),
-                              ),
-                              progressColor: Colors.deepOrange,
-                              backgroundColor: Colors.grey.shade300,
-                              circularStrokeCap: CircularStrokeCap.round,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              "Tempo do Pomodoro: $selectedDurationFormatted",
-                              style: const TextStyle(fontSize: 16),
-                              textAlign: TextAlign.center,
-                            ),
-                            Slider(
-                              min: 10,
-                              max: 3600,
-                              divisions: 60 * 6, // divisões a cada 10s
-                              value: selectedDuration,
-                              label: selectedDurationFormatted,
-                              onChanged: (value) {
-                                if (timer?.isActive ?? false) return;
-                                setState(() => selectedDuration = value);
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Botões colados à base do container
-                  Row(
-                    children: [
-                      Expanded(child: BotaoParar(onPressed: stopPomodoro)),
-                      Expanded(child: BotaoIniciar(onPressed: startPomodoro)),
-                    ],
-                  ),
-                ],
-              ),
+    return MaterialApp(
+      theme: isDark ? ThemeConfig.temaDark : ThemeConfig.temalight,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Pomodoro Timer"),
+          actions: [
+            IconButton(
+              icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+              tooltip: isDark ? 'Tema Claro' : 'Tema Escuro',
+              onPressed: toggleTheme,
             ),
           ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.shade400, width: 1.5),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TweenAnimationBuilder<double>(
+                            tween: Tween(
+                              begin: 0.0,
+                              end: progress.clamp(0.0, 1.0),
+                            ),
+                            duration: const Duration(milliseconds: 500),
+                            builder: (context, value, child) {
+                              return CircularPercentIndicator(
+                                radius: 120.0,
+                                lineWidth: 12.0,
+                                percent: value,
+                                center: Text(
+                                  timeFormatted,
+                                  style: const TextStyle(fontSize: 36),
+                                ),
+                                progressColor: Theme.of(context).primaryColor,
+                                backgroundColor: Colors.grey.shade300,
+                                circularStrokeCap: CircularStrokeCap.round,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                "Tempo do Pomodoro: $selectedDurationFormatted",
+                                style: const TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
+                              Slider(
+                                min: 10,
+                                max: 3600,
+                                divisions: 60 * 6, // divisões a cada 10s
+                                value: selectedDuration,
+                                label: selectedDurationFormatted,
+                                onChanged: (value) {
+                                  if (timer?.isActive ?? false) return;
+                                  setState(() => selectedDuration = value);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Botões colados à base do container
+                    Row(
+                      children: [
+                        Expanded(child: BotaoParar(onPressed: stopPomodoro)),
+                        Expanded(child: BotaoIniciar(onPressed: startPomodoro)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -196,7 +217,7 @@ class BotaoParar extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: onPressed,
-      color: ColorsApp.instance.CinzaMedio, // cor cinza
+      color: ThemeConfig.cinzaMedio, // cor cinza
       height: 60,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0)),

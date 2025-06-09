@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:studywithme/pages/home_page.dart';
 import 'package:studywithme/pages/login_page.dart';
-import 'package:studywithme/styles/theme/theme_config.dart';
+import 'package:studywithme/styles/theme_config.dart';
 import 'firebase_options.dart';
 
 void main() async {

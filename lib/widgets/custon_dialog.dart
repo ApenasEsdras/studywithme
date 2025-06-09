@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:studywithme/styles/colors_app.dart';
-import 'package:studywithme/styles/theme/theme_config.dart';
+import 'package:studywithme/styles/theme_config.dart';
 
 class CustomConfirmationDialog extends StatelessWidget {
   final String? titulo;
@@ -48,7 +47,7 @@ class CustomConfirmationDialog extends StatelessWidget {
                       titulo ?? 'Atenção!',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        color: ColorsApp.instance.CinzaEscuro,
+                        color: ThemeConfig.cinzaEscuro,
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -62,7 +61,7 @@ class CustomConfirmationDialog extends StatelessWidget {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 16.0,
-                        color: ColorsApp.instance.CinzaEscuro,
+                        color: ThemeConfig.cinzaEscuro,
                         fontWeight: FontWeight.normal,
                       ),
                     ),
@@ -76,7 +75,7 @@ class CustomConfirmationDialog extends StatelessWidget {
                 Expanded(
                   child: MaterialButton(
                     onPressed: sePrimeiraOpcaoClica,
-                    color: ColorsApp.instance.CinzaMedio,
+                    color: ThemeConfig.cinzaMedio,
                     height: 60,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
@@ -94,14 +93,14 @@ class CustomConfirmationDialog extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Icon(
                                 iconePrimeiraOpcao,
-                                color: ColorsApp.instance.CinzaEscuro,
+                                color: ThemeConfig.cinzaEscuro,
                               ),
                             ),
                           Text(
                             primeiraOpcao,
                             style: TextStyle(
                               fontSize: 18.0,
-                              color: ColorsApp.instance.CinzaEscuro,
+                              color: ThemeConfig.cinzaEscuro,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -131,14 +130,14 @@ class CustomConfirmationDialog extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Icon(
                                 iconeSegundaOpcao,
-                                color: ColorsApp.instance.Branco,
+                                color: ThemeConfig.branco,
                               ),
                             ),
                           Text(
                             segundaOpcao,
                             style: TextStyle(
                               fontSize: 18.0,
-                              color: ColorsApp.instance.Branco,
+                              color: ThemeConfig.branco,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
