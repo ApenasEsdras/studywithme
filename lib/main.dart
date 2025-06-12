@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:studywithme/pages/home_page.dart';
 import 'package:studywithme/pages/login_page.dart';
 import 'package:studywithme/styles/theme_config.dart';
+import 'package:studywithme/widgets/InactivityWrapper.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'Pomodoro App',
       theme: ThemeConfig.tema,
       debugShowCheckedModeBanner: false,
-      home: AuthWrapper(),
+      home: const AuthWrapper(),
     );
   }
 }
@@ -37,7 +38,7 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
-          return HomeScreen();
+          return InactivityWrapper(child: HomeScreen());
         } else {
           return LoginScreen();
         }
