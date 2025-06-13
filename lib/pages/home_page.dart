@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:studywithme/styles/theme_config.dart';
-import 'package:studywithme/widgets/custon_dialog.dart';
+import 'package:studywithme/widgets/custon_alert_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -67,6 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context);
                 startPomodoro();
               },
+              showPrimeiroBotao: true,
+              showSegundoBotao: false,
             );
           },
         );
